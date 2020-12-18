@@ -52,6 +52,7 @@ async def redditSearch(ctx, sub):
 		ret = redditScraper.randomRetrive([sub])
 	except:
 		ret = "Sorry, something went wrong! Try making sure that the subreddit you typed is correct!"
+	
 	await ctx.channel.send(ret)
 
 keep_alive.keep_alive()

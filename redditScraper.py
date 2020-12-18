@@ -14,5 +14,13 @@ def randomRetrive(subreddits ,randomRange=20):
 	subreddit = reddit.subreddit(subreddits[random.randint(0,len(subreddits)-1)])
 	postlist = []
 	for submission in subreddit.top(limit=randomRange):
-		postlist.append(submission)
-	return postlist[random.randint(0, len(postlist)-1)].url
+		nsfw = False
+		if not submission.over_18: 
+			postlist.append(submission)
+		else:
+			nsfw = True
+	
+	if len(postlist) != 0:
+		return postlist[random.randint(0, len(postlist)-1)].url
+	elif nsfw:
+		return "This content is NSFW"
