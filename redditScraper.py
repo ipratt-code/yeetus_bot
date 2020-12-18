@@ -23,4 +23,4 @@ def randomRetrive(subreddits ,randomRange=20):
 	if len(postlist) != 0:
 		return postlist[random.randint(0, len(postlist)-1)].url
 	elif nsfw:
-		return "This content is NSFW"
+		return "This content is NSFW! No peeking!"
