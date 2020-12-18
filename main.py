@@ -31,7 +31,7 @@ async def satisfying(ctx):
 	await ctx.channel.send(redditScraper.randomRetrive(['oddlysatisfying','satisfying']))
 
 @bot.command(aliases=['rs'])
-async def satisfying(ctx):
+async def redditSearch(ctx):
 	pass
 keep_alive.keep_alive()
 bot.run(TOKEN)
