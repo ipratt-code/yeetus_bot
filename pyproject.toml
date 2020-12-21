@@ -10,6 +10,7 @@ praw = "^7.1.0"
 python-dotenv = "^0.14.0"
 discord = "^1.0.1"
 flask = "^1.1.2"
+replit = "^2.0.0"
 
 [tool.poetry.dev-dependencies]
 

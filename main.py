@@ -6,6 +6,7 @@ from discord.ext import commands
 import itertools
 import redditScraper
 import yaml
+from replit import db
 
 with open (r'config.yml') as f:
 	config = yaml.load(f, Loader=yaml.FullLoader)
@@ -35,7 +36,7 @@ async def isDev(ctx):
 @bot.event
 async def on_ready():
 	print(f'{bot.user} has connected to Discord!')
-	await bot.change_presence(activity=discord.Game(name=config["game_status"]))
+	await bot.change_presence(activity=discord.Game(name=db["game_status"]))
 
 @bot.command(aliases=['a'], help="DEVS ONLY: send an anouncement to all servers this bot is in")
 @commands.check(isDev)
@@ -50,9 +51,7 @@ async def status(ctx, *status_tuple):
 	status = status.strip()
 	await bot.change_presence(activity=discord.Game(name=status))
 	await ctx.channel.send("Changed the status of the bot to `Playing " + status + "`")
-	config["game_status"] = status
-	with open('config.yml','w') as f:
-		yaml.dump(config, f)
+	db["game_status"] = status
 
 
 @bot.command(aliases=['h', 'he'], help="Sends this help panel message")
