@@ -4,9 +4,11 @@ import keep_alive
 from dotenv import load_dotenv
 from discord.ext import commands
 import itertools
-#import random
 import redditScraper
-#import searchTheWeb
+import yaml
+
+with open (r'config.yml') as f:
+	config = yaml.load(f, Loader=yaml.FullLoader)
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -16,19 +18,46 @@ prefixes = "'", ";", "??"
 bot = commands.Bot(command_prefix=prefixes)
 bot.remove_command('help')
 
+embedColor = discord.Colour.blue()
+
 #defining helper functions for formatting things nicely etc etc
 def listFmt(l):
 	fmtStr = ""
 	for item in l:
-		fmtStr += " " + item + " |"
-	return fmtStr[:-1]
+		fmtStr += item + " | "
+	return fmtStr[:-2]
+
+async def isDev(ctx):
+	for id in config['bot_devs_ids']:
+		if ctx.author.id == id:
+			return True
+
 @bot.event
 async def on_ready():
-    print(f'{bot.user} has connected to Discord!')
+	print(f'{bot.user} has connected to Discord!')
+	await bot.change_presence(activity=discord.Game(name=config["game_status"]))
 
-@bot.command(aliases=['h'], help="Sends this help panel message")
+@bot.command(aliases=['a'], help="DEVS ONLY: send an anouncement to all servers this bot is in")
+@commands.check(isDev)
+async def announcement(ctx):
+	await ctx.channel.send("owo its owner-chan!")
+
+@bot.command(aliases=['st'], help="Changes the status of the bot")
+async def status(ctx, *status_tuple):
+	status = ""
+	for item in status_tuple:
+		status += item + " "
+	status = status.strip()
+	await bot.change_presence(activity=discord.Game(name=status))
+	await ctx.channel.send("Changed the status of the bot to `Playing " + status + "`")
+	config["game_status"] = status
+	with open('config.yml','w') as f:
+		yaml.dump(config, f)
+
+
+@bot.command(aliases=['h', 'he'], help="Sends this help panel message")
 async def help(ctx):
-	embed = discord.Embed(color = discord.Color.blue())
+	embed = discord.Embed(color = embedColor)
 	embed.set_author(name="Yeetus_Bot help panel")
 	for command in bot.commands:
 		embed.add_field(name=listFmt(itertools.chain([command.name], command.aliases)), value=command.help, inline=False)
@@ -42,12 +71,12 @@ async def meme(ctx):
 async def eyebleach(ctx):
     await ctx.channel.send(redditScraper.randomRetrive(['eyebleach','aww']))
 
-@bot.command(aliases=['s'], help="Satisfies you with stuff from r/satisfying and r/oddlysatisfying")
+@bot.command(aliases=['sa'], help="Satisfies you with stuff from r/satisfying and r/oddlysatisfying")
 async def satisfying(ctx):
 	await ctx.channel.send(redditScraper.randomRetrive(['oddlysatisfying','satisfying']))
 
 @bot.command(aliases=['rs'], help="Looks up a subreddit and takes a random top post")
-async def redditSearch(ctx, sub):
+async def redditsearch(ctx, sub):
 	try:
 		ret = redditScraper.randomRetrive([sub])
 	except:
